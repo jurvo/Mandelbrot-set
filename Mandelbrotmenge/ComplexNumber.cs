@@ -58,6 +58,11 @@ namespace Mandelbrotmenge
 		}
 		#endregion
 
+		public double Sqrt()
+		{
+			return Math.Sqrt(real * real + imaginary * imaginary);
+		}
+
 		public override string ToString()
 		{
 			string s = "";
