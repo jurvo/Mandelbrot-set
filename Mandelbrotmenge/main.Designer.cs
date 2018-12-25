@@ -34,11 +34,14 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(900, 600);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.BackColor = System.Drawing.Color.White;
+			this.ClientSize = new System.Drawing.Size(100, 100);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
 			this.Name = "main";
-			this.Text = "Mandelbortmenge";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.Text = "Mandelbrotmenge";
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.main_KeyDown);
 			this.ResumeLayout(false);
 
 		}

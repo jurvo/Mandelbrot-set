@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComplexNumber.cs" />
+    <Compile Include="CoordinateSystem.cs" />
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>

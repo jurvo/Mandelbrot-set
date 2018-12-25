@@ -12,38 +12,57 @@ namespace Mandelbrotmenge
 {
 	public partial class main : Form
 	{
+		int numberOfMaxIterations;
+
 		public main()
 		{
 			InitializeComponent();
-			DoubleBuffered = true;
+			Size = Screen.PrimaryScreen.Bounds.Size;
+
+			CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
+			CoordinateSystem.Size = ClientSize;
+			CoordinateSystem.xMin = -2;
+			CoordinateSystem.xMax = 2;
+			CoordinateSystem.yMin = -1;
+			CoordinateSystem.yMax = 1;
+
+			numberOfMaxIterations = 20;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
-			e.Graphics.DrawLine(Pens.Black, new Point(0, ClientSize.Height / 2), new Point(ClientSize.Width, ClientSize.Height / 2));
-			e.Graphics.DrawLine(Pens.Black, new Point(ClientSize.Width * 2 / 3, 0), new Point(ClientSize.Width * 2 / 3, ClientSize.Height));
-
+			
 			int numberOfIterations;
+			double numberOfBlackPixel = 0;
 			ComplexNumber c;
 			ComplexNumber z;
+
 			for (double i = 0; i < ClientSize.Width; i++)
 			{
 				for (double j = 0; j < ClientSize.Height; j++)
 				{
 					numberOfIterations = 0;
-					c = new ComplexNumber((i - 600) / 300, (j - 300) / 300);
+					c = new ComplexNumber((i - CoordinateSystem.CenterPoint.X) / (CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), (j - CoordinateSystem.CenterPoint.Y) / (CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin)));
 					z = c;
-					while (numberOfIterations < 100 && z.Sqrt() < 2)
+					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
 					{
 						z = z * z + c;
 						numberOfIterations++;
 					}
 					if (z.Sqrt() < 2)
-						e.Graphics.DrawLine(Pens.Black, new Point(Convert.ToInt32(i), Convert.ToInt32(j)), new Point(Convert.ToInt32(i), Convert.ToInt32(j + 1)));
+					{
+						e.Graphics.FillRectangle(Brushes.Black, (float)i, (float)j, 1, 1);
+						numberOfBlackPixel++;
+					}
 				}
 			}
+			
+			e.Graphics.DrawString((numberOfBlackPixel / (ClientSize.Height * ClientSize.Width)).ToString(), Font, Brushes.Black, new PointF(0, 0));
+
+			e.Graphics.DrawLine(Pens.Red, new Point(0, CoordinateSystem.CenterPoint.Y), new Point(ClientSize.Width, CoordinateSystem.CenterPoint.Y));
+			e.Graphics.DrawLine(Pens.Red, new Point(CoordinateSystem.CenterPoint.X, 0), new Point(CoordinateSystem.CenterPoint.X, ClientSize.Height));
+			
 
 			/*
 			 Mitte(600,300) = 0,0
@@ -52,6 +71,12 @@ namespace Mandelbrotmenge
 
 
 			 */
+		}
+
+		private void main_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+				Application.Exit();
 		}
 	}
 }
