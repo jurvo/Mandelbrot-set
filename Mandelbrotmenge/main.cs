@@ -17,22 +17,22 @@ namespace Mandelbrotmenge
 		public main()
 		{
 			InitializeComponent();
-			Size = Screen.PrimaryScreen.Bounds.Size;
+			Size = new Size(1800,900);
 
-			CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
+			CoordinateSystem.CenterPoint = new Point(0, ClientSize.Height / 2);
 			CoordinateSystem.Size = ClientSize;
-			CoordinateSystem.xMin = -2;
-			CoordinateSystem.xMax = 2;
-			CoordinateSystem.yMin = -1;
-			CoordinateSystem.yMax = 1;
+			CoordinateSystem.xMin = 0;
+			CoordinateSystem.xMax = 0.8;
+			CoordinateSystem.yMin = -0.2;
+			CoordinateSystem.yMax = 0.2;
 
-			numberOfMaxIterations = 20;
+			numberOfMaxIterations = 50;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			
+
 			int numberOfIterations;
 			double numberOfBlackPixel = 0;
 			ComplexNumber c;
@@ -50,27 +50,20 @@ namespace Mandelbrotmenge
 						z = z * z + c;
 						numberOfIterations++;
 					}
-					if (z.Sqrt() < 2)
+					/*if (z.Sqrt() < 2)
 					{
 						e.Graphics.FillRectangle(Brushes.Black, (float)i, (float)j, 1, 1);
 						numberOfBlackPixel++;
-					}
+					}*/
+					e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255/numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
 				}
 			}
-			
-			e.Graphics.DrawString((numberOfBlackPixel / (ClientSize.Height * ClientSize.Width)).ToString(), Font, Brushes.Black, new PointF(0, 0));
 
-			e.Graphics.DrawLine(Pens.Red, new Point(0, CoordinateSystem.CenterPoint.Y), new Point(ClientSize.Width, CoordinateSystem.CenterPoint.Y));
-			e.Graphics.DrawLine(Pens.Red, new Point(CoordinateSystem.CenterPoint.X, 0), new Point(CoordinateSystem.CenterPoint.X, ClientSize.Height));
-			
+			//e.Graphics.DrawString((numberOfBlackPixel / (ClientSize.Height * ClientSize.Width)).ToString(), Font, Brushes.Black, new PointF(0, 0));
+			e.Graphics.DrawString((MousePosition.X -CoordinateSystem.CenterPoint.X) / (CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)) + " " + (MousePosition.Y - CoordinateSystem.CenterPoint.Y) / (CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin)), Font, Brushes.Black, new Point(0,0));
 
-			/*
-			 Mitte(600,300) = 0,0
-			 (0,0) = -2,-1
-			 (0,300) = -2,0
-
-
-			 */
+			e.Graphics.DrawLine(Pens.Black, new Point(0, CoordinateSystem.CenterPoint.Y), new Point(ClientSize.Width, CoordinateSystem.CenterPoint.Y));
+			e.Graphics.DrawLine(Pens.Black, new Point(CoordinateSystem.CenterPoint.X, 0), new Point(CoordinateSystem.CenterPoint.X, ClientSize.Height));
 		}
 
 		private void main_KeyDown(object sender, KeyEventArgs e)
