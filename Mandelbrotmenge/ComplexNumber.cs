@@ -36,6 +36,12 @@ namespace Mandelbrotmenge
 
 		}
 
+		public ComplexNumber(System.Drawing.PointF point)
+		{
+			this.real = point.X;
+			this.imaginary = point.Y;
+		}
+
 		#region Operator overload
 		public static ComplexNumber operator +(ComplexNumber left, ComplexNumber right)
 		{
@@ -65,14 +71,11 @@ namespace Mandelbrotmenge
 
 		public override string ToString()
 		{
-			string s = "";
-			if (real != 0)
-				s += real;
+			string s = real.ToString();
 			if (imaginary > 0)
 				s += "+";
 			if (imaginary != 0)
 				s += imaginary + "i";
-
 			return s;
 		}
 	}
