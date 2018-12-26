@@ -42,6 +42,7 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Mandelbrotmenge";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.main_KeyDown);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.main_MouseDown);
 			this.ResumeLayout(false);
 
 		}
