@@ -9,6 +9,7 @@ namespace Mandelbrotmenge
 {
 	static class CoordinateSystem
 	{
+		public static Pen Pen;
 		public static Point CenterPoint;
 		public static Size Size;
 		public static double xMin;
