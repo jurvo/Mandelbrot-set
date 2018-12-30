@@ -14,6 +14,10 @@ namespace Mandelbrotmenge
 	{
 		int numberOfMaxIterations;
 		double zoomFactor;
+		double screenRatio;
+
+		//TODO:
+		//	get display ratio from screen....
 
 		public main()
 		{
@@ -22,6 +26,7 @@ namespace Mandelbrotmenge
 
 			Size = Screen.PrimaryScreen.Bounds.Size;
 			//ClientSize = new Size(1000, 1000);
+			screenRatio = (double)ClientSize.Width / (double)ClientSize.Height;
 
 			zoomFactor = 1;
 			//CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
@@ -32,14 +37,14 @@ namespace Mandelbrotmenge
 			CoordinateSystem.yMin = -2;
 			CoordinateSystem.yMax = 2;
 
-			CoordinateSystem.xMin = CoordinateSystem.yMin * 16 / 9;
-			CoordinateSystem.xMax = CoordinateSystem.yMax * 16 / 9;
+			CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
+			CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
 
 
 			CoordinateSystem.CenterPoint = new Point((int)(-1 * CoordinateSystem.xMin * CoordinateSystem.xResolution), (int)(CoordinateSystem.yMax * CoordinateSystem.yResolution));
 			
 			CoordinateSystem.Pen = new Pen(Color.Red, 1);
-			numberOfMaxIterations = 100;
+			numberOfMaxIterations = 10;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -53,19 +58,20 @@ namespace Mandelbrotmenge
 
 			for (double i = 0; i < ClientSize.Width; i++)
 			{
-				for (double j = 0; j < ClientSize.Height; j++)
-				{
-					numberOfIterations = 0;
-					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
-					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+				/*	for (double j = 0; j < ClientSize.Height; j++)
 					{
-						z = z * z + c;
-						numberOfIterations++;
-					}
-					e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
-					if (numberOfIterations == numberOfMaxIterations)
-						numberOfBlackPixel++;
-				}
+						numberOfIterations = 0;
+						z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+						while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+						{
+							z = z * z + c;
+							numberOfIterations++;
+						}
+						e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
+						if (numberOfIterations == numberOfMaxIterations)
+							numberOfBlackPixel++;
+					}*/
+				//e.Graphics.DrawLine(Pens.White, new Point((int)i, 0), new Point((int)i, ClientSize.Height));
 			}
 
 			#region Coordinate System drawing
@@ -127,8 +133,12 @@ namespace Mandelbrotmenge
 		{
 			if (e.Delta > 0)
 			{
+				CoordinateSystem.yMin /= 2;
+				CoordinateSystem.yMax /= 2;
 
-			//	Invalidate();
+				CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
+				CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
+				Invalidate();
 			}
 			else if (e.Delta < 0)
 			{
