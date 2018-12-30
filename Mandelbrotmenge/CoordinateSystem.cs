@@ -16,5 +16,20 @@ namespace Mandelbrotmenge
 		public static double xMax;
 		public static double yMin;
 		public static double yMax;
+
+		public static double xResolution
+		{
+			get { return Size.Width / (xMax - xMin); }
+		}
+
+		public static double yResolution
+		{
+			get { return Size.Height / (yMax - yMin); }
+		}
+
+		public static void calcCenter()
+		{
+			CenterPoint = new Point((int)(-1 * xMin * xResolution), (int)(yMax * yResolution));
+		}
 	}
 }

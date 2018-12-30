@@ -21,27 +21,31 @@ namespace Mandelbrotmenge
 			MouseWheel += Main_MouseWheel;
 
 			Size = Screen.PrimaryScreen.Bounds.Size;
+			//ClientSize = new Size(1000, 1000);
 
 			zoomFactor = 1;
 			//CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
 			CoordinateSystem.Size = ClientSize;
+			
 			CoordinateSystem.xMin = -2;
-			CoordinateSystem.xMax = 1;
-			CoordinateSystem.yMin = -1;
-			CoordinateSystem.yMax = 1;
+			CoordinateSystem.xMax = 2;
+			CoordinateSystem.yMin = -2;
+			CoordinateSystem.yMax = 2;
 
-			CoordinateSystem.CenterPoint = new Point((int)(-1 * CoordinateSystem.xMin * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), (int)(CoordinateSystem.yMax * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin)));
+			CoordinateSystem.xMin = CoordinateSystem.yMin * 16 / 9;
+			CoordinateSystem.xMax = CoordinateSystem.yMax * 16 / 9;
 
 
+			CoordinateSystem.CenterPoint = new Point((int)(-1 * CoordinateSystem.xMin * CoordinateSystem.xResolution), (int)(CoordinateSystem.yMax * CoordinateSystem.yResolution));
+			
 			CoordinateSystem.Pen = new Pen(Color.Red, 1);
-			numberOfMaxIterations = 50;
+			numberOfMaxIterations = 100;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
-
+			
 			int numberOfIterations;
 			double numberOfBlackPixel = 0;
 			ComplexNumber c;
@@ -58,11 +62,13 @@ namespace Mandelbrotmenge
 						z = z * z + c;
 						numberOfIterations++;
 					}
+					e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
 					if (numberOfIterations == numberOfMaxIterations)
-						e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
+						numberOfBlackPixel++;
 				}
 			}
 
+			#region Coordinate System drawing
 			for (int i = 1; i < CoordinateSystem.xMax; i++)
 			{
 				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.CenterPoint.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.CenterPoint.Y - 5), new Point((int)(CoordinateSystem.CenterPoint.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.CenterPoint.Y + 5));
@@ -79,9 +85,10 @@ namespace Mandelbrotmenge
 			{
 				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.CenterPoint.X - 5, (int)(CoordinateSystem.CenterPoint.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.CenterPoint.X + 5, (int)(CoordinateSystem.CenterPoint.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
 			}
-
+		
 			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.CenterPoint.Y), new Point(ClientSize.Width, CoordinateSystem.CenterPoint.Y));
 			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.CenterPoint.X, 0), new Point(CoordinateSystem.CenterPoint.X, ClientSize.Height));
+			#endregion
 		}
 
 		private void main_KeyDown(object sender, KeyEventArgs e)
@@ -90,7 +97,7 @@ namespace Mandelbrotmenge
 				Application.Exit();
 			if (e.KeyCode == Keys.Space)
 			{
-
+			
 			}
 		}
 
@@ -102,7 +109,17 @@ namespace Mandelbrotmenge
 			}
 			else if (e.Button == MouseButtons.Right)
 			{
+//				CoordinateSystem.xMin = -1.920;
+//				CoordinateSystem.xMax = 1.920;
+				CoordinateSystem.yMin = -1.080;
+				CoordinateSystem.yMax = 1.080;
 
+				CoordinateSystem.xMin = CoordinateSystem.yMin * 16 / 9;
+				CoordinateSystem.xMax = CoordinateSystem.yMax * 16 / 9;
+
+				CoordinateSystem.calcCenter();
+
+				Invalidate();
 			}
 		}
 
@@ -111,19 +128,19 @@ namespace Mandelbrotmenge
 			if (e.Delta > 0)
 			{
 
-				Invalidate();
+			//	Invalidate();
 			}
 			else if (e.Delta < 0)
 			{
 
-				Invalidate();
+			//	Invalidate();
 			}
 		}
 
 		private PointF ScreenToCoordinate(PointF p)
 		{
-			double x = (p.X - CoordinateSystem.CenterPoint.X) / (CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin));
-			double y = (p.Y - CoordinateSystem.CenterPoint.Y) / (CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin));
+			double x = (p.X - CoordinateSystem.CenterPoint.X) / CoordinateSystem.xResolution;
+			double y = (p.Y - CoordinateSystem.CenterPoint.Y) / CoordinateSystem.yResolution;
 
 			return new PointF((float)x, (float)y);
 		}
