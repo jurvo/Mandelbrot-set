@@ -14,9 +14,7 @@ namespace Mandelbrotmenge
 	{
 		int numberOfMaxIterations;
 		double screenRatio;
-
-		//TODO:
-		//	get display ratio from screen....
+		
 
 		public main()
 		{
@@ -24,7 +22,6 @@ namespace Mandelbrotmenge
 			MouseWheel += Main_MouseWheel;
 
 			Size = Screen.PrimaryScreen.Bounds.Size;
-			//ClientSize = new Size(1000, 1000);
 			screenRatio = (double)ClientSize.Width / (double)ClientSize.Height;
 
 			//CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
@@ -39,7 +36,7 @@ namespace Mandelbrotmenge
 			CoordinateSystem.calcCenter();
 
 			CoordinateSystem.Pen = new Pen(Color.Red, 1);
-			numberOfMaxIterations = 100;
+			numberOfMaxIterations = 50;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -91,37 +88,48 @@ namespace Mandelbrotmenge
 			#region Coordinate System drawing
 			for (int i = 1; i < CoordinateSystem.xMax; i++)
 			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.CenterPoint.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.CenterPoint.Y - 5), new Point((int)(CoordinateSystem.CenterPoint.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.CenterPoint.Y + 5));
+				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y - 5), new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y + 5));
 			}
 			for (int i = -1; i > CoordinateSystem.xMin; i--)
 			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.CenterPoint.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.CenterPoint.Y - 5), new Point((int)(CoordinateSystem.CenterPoint.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.CenterPoint.Y + 5));
+				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y - 5), new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y + 5));
 			}
 			for (int i = 1; i < CoordinateSystem.yMax; i++)
 			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.CenterPoint.X - 5, (int)(CoordinateSystem.CenterPoint.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.CenterPoint.X + 5, (int)(CoordinateSystem.CenterPoint.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
+				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X - 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.Origin.X + 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
 			}
 			for (int i = -1; i > CoordinateSystem.yMin; i--)
 			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.CenterPoint.X - 5, (int)(CoordinateSystem.CenterPoint.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.CenterPoint.X + 5, (int)(CoordinateSystem.CenterPoint.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
+				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X - 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.Origin.X + 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
 			}
 
-			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.CenterPoint.Y), new Point(ClientSize.Width, CoordinateSystem.CenterPoint.Y));
-			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.CenterPoint.X, 0), new Point(CoordinateSystem.CenterPoint.X, ClientSize.Height));
+			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.Origin.Y), new Point(ClientSize.Width, CoordinateSystem.Origin.Y));
+			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X, 0), new Point(CoordinateSystem.Origin.X, ClientSize.Height));
 			#endregion
 		}
 
 		private void main_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Escape)
-				Application.Exit();
+			switch(e.KeyCode)
+			{
+				case Keys.Escape:
+					Application.Exit();
+					break;
+				case Keys.PrintScreen:
+					Bitmap screenshot = new Bitmap(ClientSize.Width, ClientSize.Height);
+					DrawToBitmap(screenshot, ClientRectangle);
+					screenshot.Save(@"C:\Users\Jurek\Desktop\screen.png", System.Drawing.Imaging.ImageFormat.Png);
+					break;
+				default:
+					break;
+			}
 		}
 
 		private void main_MouseDown(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-				
+
 			}
 			else if (e.Button == MouseButtons.Right)
 			{
@@ -150,14 +158,19 @@ namespace Mandelbrotmenge
 			}
 			else if (e.Delta < 0)
 			{
-				
+				CoordinateSystem.yMin *= 2;
+				CoordinateSystem.yMax *= 2;
+
+				CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
+				CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
+				Invalidate();
 			}
 		}
 
 		private PointF ScreenToCoordinate(PointF p)
 		{
-			double x = (p.X - CoordinateSystem.CenterPoint.X) / CoordinateSystem.xResolution;
-			double y = (p.Y - CoordinateSystem.CenterPoint.Y) / CoordinateSystem.yResolution;
+			double x = (p.X - CoordinateSystem.Origin.X) / CoordinateSystem.xResolution;
+			double y = (CoordinateSystem.Origin.Y - p.Y) / CoordinateSystem.yResolution;
 
 			return new PointF((float)x, (float)y);
 		}

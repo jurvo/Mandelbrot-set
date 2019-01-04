@@ -10,7 +10,10 @@ namespace Mandelbrotmenge
 	static class CoordinateSystem
 	{
 		public static Pen Pen;
-		public static Point CenterPoint;
+		/// <summary>
+		/// THe origin point in px.
+		/// </summary>
+		public static Point Origin;
 		public static Size Size;
 		public static double xMin;
 		public static double xMax;
@@ -29,7 +32,7 @@ namespace Mandelbrotmenge
 
 		public static void calcCenter()
 		{
-			CenterPoint = new Point((int)(-1 * xMin * xResolution), (int)(yMax * yResolution));
+			Origin = new Point((int)(-1 * xMin * xResolution), (int)(yMax * yResolution));
 		}
 	}
 }
