@@ -14,7 +14,6 @@ namespace Mandelbrotmenge
 	{
 		int numberOfMaxIterations;
 		double screenRatio;
-		
 
 		public main()
 		{
@@ -22,17 +21,15 @@ namespace Mandelbrotmenge
 			MouseWheel += Main_MouseWheel;
 
 			Size = Screen.PrimaryScreen.Bounds.Size;
-			screenRatio = (double)ClientSize.Width / (double)ClientSize.Height;
+			screenRatio = ClientSize.Width / (double)ClientSize.Height;
 
 			//CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
 			CoordinateSystem.Size = ClientSize;
 
 			CoordinateSystem.yMin = -2;
 			CoordinateSystem.yMax = 2;
-
 			CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
 			CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
-
 			CoordinateSystem.calcCenter();
 
 			CoordinateSystem.Pen = new Pen(Color.Red, 1);
@@ -48,7 +45,6 @@ namespace Mandelbrotmenge
 			ComplexNumber c;
 			ComplexNumber z;
 			int[] array = new int[ClientSize.Height];
-
 
 			for (double i = 0; i < ClientSize.Width; i++)
 			{
@@ -66,23 +62,6 @@ namespace Mandelbrotmenge
 					if (numberOfIterations == numberOfMaxIterations)
 						numberOfBlackPixel++;
 				}
-
-				//int value = array[0];
-				//int start = 0;
-				//int end = 0;
-				//for (int j = 0; j < ClientSize.Height; j++)
-				//{
-				//	if (value == array[j])
-				//	{
-				//		end = j;
-				//	}
-				//	else
-				//	{
-				//		e.Graphics.DrawLine(new Pen(Color.FromArgb(255, array[j] * 255 / numberOfMaxIterations, array[j] * 255 / numberOfMaxIterations, array[j] * 255 / numberOfMaxIterations), 1), new Point((int)i,start), new Point((int)i,end));
-				//		start = j;
-				//		value = array[j];
-				//	}
-				//}
 			}
 
 			#region Coordinate System drawing
@@ -110,7 +89,7 @@ namespace Mandelbrotmenge
 
 		private void main_KeyDown(object sender, KeyEventArgs e)
 		{
-			switch(e.KeyCode)
+			switch (e.KeyCode)
 			{
 				case Keys.Escape:
 					Application.Exit();
@@ -138,7 +117,7 @@ namespace Mandelbrotmenge
 
 				CoordinateSystem.xMin = CoordinateSystem.yMin * 16 / 9;
 				CoordinateSystem.xMax = CoordinateSystem.yMax * 16 / 9;
-			
+
 				CoordinateSystem.calcCenter();
 
 				Invalidate();
