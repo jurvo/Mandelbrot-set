@@ -20,9 +20,10 @@ namespace Mandelbrotmenge
 			InitializeComponent();
 			MouseWheel += Main_MouseWheel;
 
-			Size = Screen.PrimaryScreen.Bounds.Size;
+			//			Size = Screen.PrimaryScreen.Bounds.Size;
+			Size = new Size(1000, 500);
 			screenRatio = ClientSize.Width / (double)ClientSize.Height;
-			
+
 			CoordinateSystem.Size = ClientSize;
 
 			CoordinateSystem.yMin = -2;
@@ -82,7 +83,8 @@ namespace Mandelbrotmenge
 			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.Origin.Y), new Point(ClientSize.Width, CoordinateSystem.Origin.Y));
 			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X, 0), new Point(CoordinateSystem.Origin.X, ClientSize.Height));
 			#endregion
-			e.Graphics.DrawString((DateTime.Now - t).TotalSeconds.ToString(), Font, Brushes.Red, new PointF(0, 0));
+			string s = "xMin: " + CoordinateSystem.xMin + "\n" + "xMax: " + CoordinateSystem.xMax + "\n" + "yMin: " + CoordinateSystem.yMin + "\n" + "yMax: " + CoordinateSystem.yMax;
+			e.Graphics.DrawString(s, Font, Brushes.Red, new PointF(0, 0));
 		}
 
 		private void main_KeyDown(object sender, KeyEventArgs e)
@@ -106,15 +108,31 @@ namespace Mandelbrotmenge
 		{
 			if (e.Button == MouseButtons.Left)
 			{
+				PointF coord = ScreenToCoordinate(e.Location);
 
+				double tempXMax = CoordinateSystem.xMax;
+				double tempXMin = CoordinateSystem.xMin;
+
+				double tempYMax = CoordinateSystem.yMax;
+				double tempYMin = CoordinateSystem.yMin;
+
+				CoordinateSystem.xMin = coord.X - (tempXMax - tempXMin) / 2;
+				CoordinateSystem.xMax = coord.X + (tempXMax - tempXMin) / 2;
+
+				CoordinateSystem.yMin = coord.Y - (tempYMax - tempYMin) / 2;
+				CoordinateSystem.yMax = coord.Y + (tempYMax - tempYMin) / 2;
+
+				CoordinateSystem.calcOrigin();
+
+				Invalidate();
 			}
 			else if (e.Button == MouseButtons.Right)
 			{
 				CoordinateSystem.yMin = -2;
 				CoordinateSystem.yMax = 2;
 
-				CoordinateSystem.xMin = CoordinateSystem.yMin * 16 / 9;
-				CoordinateSystem.xMax = CoordinateSystem.yMax * 16 / 9;
+				CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
+				CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
 
 				CoordinateSystem.calcOrigin();
 

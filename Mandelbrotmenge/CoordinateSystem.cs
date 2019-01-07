@@ -11,7 +11,7 @@ namespace Mandelbrotmenge
 	{
 		public static Pen Pen;
 		/// <summary>
-		/// THe origin point in px.
+		/// The origin point in px.
 		/// </summary>
 		public static Point Origin;
 		public static Size Size;
