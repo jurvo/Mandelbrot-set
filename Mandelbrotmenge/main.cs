@@ -20,8 +20,8 @@ namespace Mandelbrotmenge
 			InitializeComponent();
 			MouseWheel += Main_MouseWheel;
 
-			//			Size = Screen.PrimaryScreen.Bounds.Size;
-			Size = new Size(1000, 500);
+			Size = Screen.PrimaryScreen.Bounds.Size;
+			//Size = new Size(1000, 500);
 			screenRatio = ClientSize.Width / (double)ClientSize.Height;
 
 			CoordinateSystem.Size = ClientSize;
