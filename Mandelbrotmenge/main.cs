@@ -38,7 +38,7 @@ namespace Mandelbrotmenge
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-
+			DateTime t = DateTime.Now;
 			int numberOfIterations;
 			double numberOfBlackPixel = 0;
 			ComplexNumber c;
@@ -82,6 +82,7 @@ namespace Mandelbrotmenge
 			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.Origin.Y), new Point(ClientSize.Width, CoordinateSystem.Origin.Y));
 			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X, 0), new Point(CoordinateSystem.Origin.X, ClientSize.Height));
 			#endregion
+			e.Graphics.DrawString((DateTime.Now - t).TotalSeconds.ToString(), Font, Brushes.Red, new PointF(0, 0));
 		}
 
 		private void main_KeyDown(object sender, KeyEventArgs e)
