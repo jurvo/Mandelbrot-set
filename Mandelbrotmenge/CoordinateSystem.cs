@@ -30,7 +30,7 @@ namespace Mandelbrotmenge
 			get { return Size.Height / (yMax - yMin); }
 		}
 
-		public static void calcCenter()
+		public static void calcOrigin()
 		{
 			Origin = new Point((int)(-1 * xMin * xResolution), (int)(yMax * yResolution));
 		}

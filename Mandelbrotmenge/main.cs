@@ -22,15 +22,14 @@ namespace Mandelbrotmenge
 
 			Size = Screen.PrimaryScreen.Bounds.Size;
 			screenRatio = ClientSize.Width / (double)ClientSize.Height;
-
-			//CoordinateSystem.CenterPoint = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
+			
 			CoordinateSystem.Size = ClientSize;
 
 			CoordinateSystem.yMin = -2;
 			CoordinateSystem.yMax = 2;
 			CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
 			CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
-			CoordinateSystem.calcCenter();
+			CoordinateSystem.calcOrigin();
 
 			CoordinateSystem.Pen = new Pen(Color.Red, 1);
 			numberOfMaxIterations = 50;
@@ -44,7 +43,6 @@ namespace Mandelbrotmenge
 			double numberOfBlackPixel = 0;
 			ComplexNumber c;
 			ComplexNumber z;
-			int[] array = new int[ClientSize.Height];
 
 			for (double i = 0; i < ClientSize.Width; i++)
 			{
@@ -58,7 +56,6 @@ namespace Mandelbrotmenge
 						numberOfIterations++;
 					}
 					e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
-					array[(int)j] = numberOfIterations;
 					if (numberOfIterations == numberOfMaxIterations)
 						numberOfBlackPixel++;
 				}
@@ -118,7 +115,7 @@ namespace Mandelbrotmenge
 				CoordinateSystem.xMin = CoordinateSystem.yMin * 16 / 9;
 				CoordinateSystem.xMax = CoordinateSystem.yMax * 16 / 9;
 
-				CoordinateSystem.calcCenter();
+				CoordinateSystem.calcOrigin();
 
 				Invalidate();
 			}
