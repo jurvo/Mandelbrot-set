@@ -94,11 +94,6 @@ namespace Mandelbrotmenge
 				case Keys.Escape:
 					Application.Exit();
 					break;
-				case Keys.PrintScreen:
-					Bitmap screenshot = new Bitmap(ClientSize.Width, ClientSize.Height);
-					DrawToBitmap(screenshot, ClientRectangle);
-					screenshot.Save(@"C:\Users\Jurek\Desktop\screen.png", System.Drawing.Imaging.ImageFormat.Png);
-					break;
 				default:
 					break;
 			}
