@@ -33,7 +33,7 @@ namespace Mandelbrotmenge
 			CoordinateSystem.calcOrigin();
 
 			CoordinateSystem.Pen = new Pen(Color.Red, 1);
-			numberOfMaxIterations = 50;
+			numberOfMaxIterations = 100;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -144,20 +144,24 @@ namespace Mandelbrotmenge
 		{
 			if (e.Delta > 0)
 			{
-				CoordinateSystem.yMin /= 2;
-				CoordinateSystem.yMax /= 2;
+				PointF x = ScreenToCoordinate(new PointF (ClientSize.Width / 2, ClientSize.Height / 2));
+				CoordinateSystem.xMin = CoordinateSystem.xMin + Math.Abs(x.X - CoordinateSystem.xMin) / 2;
+				CoordinateSystem.xMax = CoordinateSystem.xMax - Math.Abs(x.X - CoordinateSystem.xMax) / 2;
 
-				CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
-				CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
+				CoordinateSystem.yMin = CoordinateSystem.yMin + Math.Abs(x.Y - CoordinateSystem.yMin) / 2;
+				CoordinateSystem.yMax = CoordinateSystem.yMax - Math.Abs(x.Y - CoordinateSystem.yMax) / 2;
+				CoordinateSystem.calcOrigin();
 				Invalidate();
 			}
 			else if (e.Delta < 0)
 			{
-				CoordinateSystem.yMin *= 2;
-				CoordinateSystem.yMax *= 2;
+				PointF x = ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2));
+				CoordinateSystem.xMin = CoordinateSystem.xMin - Math.Abs(x.X - CoordinateSystem.xMin);
+				CoordinateSystem.xMax = CoordinateSystem.xMax + Math.Abs(x.X - CoordinateSystem.xMax);
 
-				CoordinateSystem.xMin = CoordinateSystem.yMin * screenRatio;
-				CoordinateSystem.xMax = CoordinateSystem.yMax * screenRatio;
+				CoordinateSystem.yMin = CoordinateSystem.yMin - Math.Abs(x.Y - CoordinateSystem.yMin);
+				CoordinateSystem.yMax = CoordinateSystem.yMax + Math.Abs(x.Y - CoordinateSystem.yMax);
+				CoordinateSystem.calcOrigin();
 				Invalidate();
 			}
 		}
