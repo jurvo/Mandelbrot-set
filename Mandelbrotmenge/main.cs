@@ -63,25 +63,33 @@ namespace Mandelbrotmenge
 			}
 
 			#region Coordinate System drawing
-			for (int i = 1; i < CoordinateSystem.xMax; i++)
-			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y - 5), new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y + 5));
-			}
-			for (int i = -1; i > CoordinateSystem.xMin; i--)
-			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y - 5), new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y + 5));
-			}
-			for (int i = 1; i < CoordinateSystem.yMax; i++)
-			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X - 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.Origin.X + 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
-			}
-			for (int i = -1; i > CoordinateSystem.yMin; i--)
-			{
-				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X - 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.Origin.X + 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
-			}
 
-			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.Origin.Y), new Point(ClientSize.Width, CoordinateSystem.Origin.Y));
-			e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X, 0), new Point(CoordinateSystem.Origin.X, ClientSize.Height));
+			//x-Achse
+			if (CoordinateSystem.Origin.Y > 0 && CoordinateSystem.Origin.Y < ClientSize.Height)
+			{
+				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(0, CoordinateSystem.Origin.Y), new Point(ClientSize.Width, CoordinateSystem.Origin.Y));
+				for (int i = 1; i < CoordinateSystem.xMax; i++)
+				{
+					e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y - 5), new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y + 5));
+				}
+				for (int i = -1; i > CoordinateSystem.xMin; i--)
+				{
+					e.Graphics.DrawLine(CoordinateSystem.Pen, new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y - 5), new Point((int)(CoordinateSystem.Origin.X + i * CoordinateSystem.Size.Width / (CoordinateSystem.xMax - CoordinateSystem.xMin)), CoordinateSystem.Origin.Y + 5));
+				}
+			}
+			//y-Achse
+			if (CoordinateSystem.Origin.X > 0 && CoordinateSystem.Origin.X < ClientSize.Width)
+			{
+				e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X, 0), new Point(CoordinateSystem.Origin.X, ClientSize.Height));
+				for (int i = 1; i < CoordinateSystem.yMax; i++)
+				{
+					e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X - 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.Origin.X + 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
+				}
+				for (int i = -1; i > CoordinateSystem.yMin; i--)
+				{
+					e.Graphics.DrawLine(CoordinateSystem.Pen, new Point(CoordinateSystem.Origin.X - 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))), new Point(CoordinateSystem.Origin.X + 5, (int)(CoordinateSystem.Origin.Y + i * CoordinateSystem.Size.Height / (CoordinateSystem.yMax - CoordinateSystem.yMin))));
+				}
+			}
 			#endregion
 			string s = "xMin: " + CoordinateSystem.xMin + "\n" + "xMax: " + CoordinateSystem.xMax + "\n" + "yMin: " + CoordinateSystem.yMin + "\n" + "yMax: " + CoordinateSystem.yMax;
 			e.Graphics.DrawString(s, Font, Brushes.Red, new PointF(0, 0));
