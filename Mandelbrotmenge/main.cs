@@ -44,6 +44,7 @@ namespace Mandelbrotmenge
 			double numberOfBlackPixel = 0;
 			ComplexNumber c;
 			ComplexNumber z;
+			Bitmap b = new Bitmap(ClientSize.Width,ClientSize.Height);
 
 			for (double i = 0; i < ClientSize.Width; i++)
 			{
@@ -56,11 +57,13 @@ namespace Mandelbrotmenge
 						z = z * z + c;
 						numberOfIterations++;
 					}
-					e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations)), (float)i, (float)j, 1, 1);
+					b.SetPixel((int)i, (int)j, Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations));
 					if (numberOfIterations == numberOfMaxIterations)
 						numberOfBlackPixel++;
 				}
 			}
+
+			e.Graphics.DrawImage(b, new PointF(0, 0));
 
 			#region Coordinate System drawing
 
