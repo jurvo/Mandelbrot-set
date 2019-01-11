@@ -41,10 +41,9 @@ namespace Mandelbrotmenge
 			base.OnPaint(e);
 			DateTime t = DateTime.Now;
 			int numberOfIterations;
-			double numberOfBlackPixel = 0;
 			ComplexNumber c;
 			ComplexNumber z;
-			Bitmap b = new Bitmap(ClientSize.Width,ClientSize.Height);
+			Bitmap b = new Bitmap(ClientSize.Width, ClientSize.Height);
 
 			for (double i = 0; i < ClientSize.Width; i++)
 			{
@@ -57,13 +56,13 @@ namespace Mandelbrotmenge
 						z = z * z + c;
 						numberOfIterations++;
 					}
-					b.SetPixel((int)i, (int)j, Color.FromArgb(255, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations, numberOfIterations * 255 / numberOfMaxIterations));
-					if (numberOfIterations == numberOfMaxIterations)
-						numberOfBlackPixel++;
+					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					b.SetPixel((int)i, (int)j, Color.FromArgb(255, x, x, x));
 				}
 			}
 
-			e.Graphics.DrawImage(b, new PointF(0, 0));
+			if (b != null)
+				e.Graphics.DrawImage(b, new PointF(0, 0));
 
 			#region Coordinate System drawing
 
@@ -94,7 +93,8 @@ namespace Mandelbrotmenge
 				}
 			}
 			#endregion
-			string s = "xMin: " + CoordinateSystem.xMin + "\n" + "xMax: " + CoordinateSystem.xMax + "\n" + "yMin: " + CoordinateSystem.yMin + "\n" + "yMax: " + CoordinateSystem.yMax;
+
+			string s = "xMin: " + CoordinateSystem.xMin + "\n" + "xMax: " + CoordinateSystem.xMax + "\n" + "yMin: " + CoordinateSystem.yMin + "\n" + "yMax: " + CoordinateSystem.yMax + "\n" + ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2)).ToString();
 			e.Graphics.DrawString(s, Font, Brushes.Red, new PointF(0, 0));
 		}
 
@@ -150,7 +150,7 @@ namespace Mandelbrotmenge
 		{
 			if (e.Delta > 0)
 			{
-				PointF x = ScreenToCoordinate(new PointF (ClientSize.Width / 2, ClientSize.Height / 2));
+				PointF x = ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2));
 				CoordinateSystem.xMin = CoordinateSystem.xMin + Math.Abs(x.X - CoordinateSystem.xMin) / 2;
 				CoordinateSystem.xMax = CoordinateSystem.xMax - Math.Abs(x.X - CoordinateSystem.xMax) / 2;
 
