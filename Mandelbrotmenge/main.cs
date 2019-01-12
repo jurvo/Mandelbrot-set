@@ -12,14 +12,38 @@ namespace Mandelbrotmenge
 {
 	public partial class main : Form
 	{
-		int numberOfMaxIterations;
-		double screenRatio;
-		bool drawCoord;
-		bool drawInfo;
-		bool drawCoordInfo;
-		bool drawPerfInfo;
-		bool drawCenterCoordInfo;
-		bool drawCrosshair;
+		
+		private double screenRatio;
+		/// <summary>
+		/// Number of max Iteration to proof that c is bounded.
+		/// </summary>
+		private int numberOfMaxIterations;
+		/// <summary>
+		/// Flag to control if the axis is drawn.
+		/// </summary>
+		private bool drawAxis;
+		/// <summary>
+		/// Flag to control if the informations are drawn, if false, non of the infos  is drawn, wheter or not the flags are true.
+		/// </summary>
+		private bool drawInfo;
+		/// <summary>
+		/// Flag to control if values like xMin and xMax are drawn.
+		/// </summary>
+		private bool drawCoordInfo;
+		/// <summary>
+		/// Flag to control if the delta time is drawn.
+		/// </summary>
+		private bool drawPerfInfo;
+		/// <summary>
+		/// Flag to control if the centerscreen coordinate is drawn.
+		/// </summary>
+		private bool drawCenterCoordInfo;
+		/// <summary>
+		/// Flag to control if the crosshair is drawn.
+		/// </summary>
+		private bool drawCrosshair;
+
+		private bool updateMandelbrot;
 
 		Bitmap b;
 
@@ -29,6 +53,8 @@ namespace Mandelbrotmenge
 			MouseWheel += Main_MouseWheel;
 
 			Size = Screen.PrimaryScreen.Bounds.Size; //set fullscreen
+
+			updateMandelbrot = false;
 
 			#region Init of CoordinateSystem
 			screenRatio = ClientSize.Width / (double)ClientSize.Height;
@@ -42,13 +68,13 @@ namespace Mandelbrotmenge
 			#endregion
 
 			#region Settings
-			numberOfMaxIterations = 100; //Number of max Iteration to proof that c is bounded
-			drawCoord = true; //flag to control if the axis is drawn
-			drawInfo = true; //flag to control if the informations are drawn, if false, non of the infos  is drawn, wheter or not the flags are true
-			drawCoordInfo = true; //flag to control if values like xMin and xMax are drawn
-			drawPerfInfo = true; //flag to control if the delta time is drawn
-			drawCenterCoordInfo = true; //flag to control if the centerscreen coordinate is drawn
-			drawCrosshair = true; //flag to control if the crosshair is drawn
+			numberOfMaxIterations = 100;
+			drawAxis = true;
+			drawInfo = true;
+			drawCoordInfo = true;
+			drawPerfInfo = true;
+			drawCenterCoordInfo = true;
+			drawCrosshair = true;
 			#endregion
 		}
 
@@ -58,33 +84,36 @@ namespace Mandelbrotmenge
 			DateTime t = DateTime.Now;
 
 			#region set drawing
-			int numberOfIterations;
-			ComplexNumber c;
-			ComplexNumber z;
-			b = new Bitmap(ClientSize.Width, ClientSize.Height);
-
-			for (double i = 0; i < ClientSize.Width; i++)
+			if (b == null || updateMandelbrot)
 			{
-				for (double j = 0; j < ClientSize.Height; j++)
+				updateMandelbrot = false;
+
+				int numberOfIterations;
+				ComplexNumber c;
+				ComplexNumber z;
+				b = new Bitmap(ClientSize.Width, ClientSize.Height);
+
+				for (double i = 0; i < ClientSize.Width; i++)
 				{
-					numberOfIterations = 0;
-					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
-					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+					for (double j = 0; j < ClientSize.Height; j++)
 					{
-						z = z * z + c;
-						numberOfIterations++;
+						numberOfIterations = 0;
+						z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+						while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+						{
+							z = z * z + c;
+							numberOfIterations++;
+						}
+						int x = numberOfIterations * 255 / numberOfMaxIterations;
+						b.SetPixel((int)i, (int)j, Color.FromArgb(255, x, x, x));
 					}
-					int x = numberOfIterations * 255 / numberOfMaxIterations;
-					b.SetPixel((int)i, (int)j, Color.FromArgb(255, x, x, x));
 				}
 			}
-
-			if (b != null)
-				e.Graphics.DrawImage(b, new PointF(0, 0));
+			e.Graphics.DrawImage(b, new PointF(0, 0));
 			#endregion
 
 			#region Coordinate System drawing
-			if (drawCoord)
+			if (drawAxis)
 			{
 				//x-Achse
 				if (CoordinateSystem.Origin.Y > 0 && CoordinateSystem.Origin.Y < ClientSize.Height)
@@ -141,6 +170,18 @@ namespace Mandelbrotmenge
 				case Keys.Escape:
 					Application.Exit();
 					break;
+				case Keys.C:
+					drawCrosshair = !drawCrosshair;
+					Invalidate();
+					break;
+				case Keys.O:
+					drawAxis = !drawAxis;
+					Invalidate();
+					break;
+				case Keys.I:
+					drawInfo = !drawInfo;
+					Invalidate();
+					break;
 				default:
 					break;
 			}
@@ -166,6 +207,7 @@ namespace Mandelbrotmenge
 
 				CoordinateSystem.calcOrigin();
 
+				updateMandelbrot = true;
 				Invalidate();
 			}
 			else if (e.Button == MouseButtons.Right)
@@ -178,6 +220,7 @@ namespace Mandelbrotmenge
 
 				CoordinateSystem.calcOrigin();
 
+				updateMandelbrot = true;
 				Invalidate();
 			}
 		}
@@ -193,6 +236,7 @@ namespace Mandelbrotmenge
 				CoordinateSystem.yMin = CoordinateSystem.yMin + Math.Abs(x.Y - CoordinateSystem.yMin) / 2;
 				CoordinateSystem.yMax = CoordinateSystem.yMax - Math.Abs(x.Y - CoordinateSystem.yMax) / 2;
 				CoordinateSystem.calcOrigin();
+				updateMandelbrot = true;
 				Invalidate();
 			}
 			else if (e.Delta < 0)
@@ -204,6 +248,7 @@ namespace Mandelbrotmenge
 				CoordinateSystem.yMin = CoordinateSystem.yMin - Math.Abs(x.Y - CoordinateSystem.yMin);
 				CoordinateSystem.yMax = CoordinateSystem.yMax + Math.Abs(x.Y - CoordinateSystem.yMax);
 				CoordinateSystem.calcOrigin();
+				updateMandelbrot = true;
 				Invalidate();
 			}
 		}
