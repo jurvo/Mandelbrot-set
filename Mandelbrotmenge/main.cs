@@ -81,6 +81,7 @@ namespace Mandelbrotmenge
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
+			e.Graphics.DrawString("working...", Font, Brushes.Red, new PointF(ClientSize.Width / 2 - e.Graphics.MeasureString("working...", Font).Width / 2, ClientSize.Height / 2 - e.Graphics.MeasureString("working...", Font).Height / 2));
 			DateTime t = DateTime.Now;
 
 			#region set drawing
