@@ -12,7 +12,9 @@ namespace Mandelbrotmenge
 {
 	public partial class main : Form
 	{
-		
+		/// <summary>
+		/// Ration between width and height.
+		/// </summary>
 		private double screenRatio;
 		/// <summary>
 		/// Number of max Iteration to proof that c is bounded.
@@ -42,6 +44,10 @@ namespace Mandelbrotmenge
 		/// Flag to control if the crosshair is drawn.
 		/// </summary>
 		private bool drawCrosshair;
+		/// <summary>
+		/// Flag to control if the number of iterations per pixel is drawn.
+		/// </summary>
+		private bool drawNumberOfIterations;
 
 		private bool updateMandelbrot;
 
@@ -75,6 +81,7 @@ namespace Mandelbrotmenge
 			drawPerfInfo = true;
 			drawCenterCoordInfo = true;
 			drawCrosshair = true;
+			drawNumberOfIterations = true;
 			#endregion
 		}
 
@@ -84,16 +91,16 @@ namespace Mandelbrotmenge
 			e.Graphics.DrawString("working...", Font, Brushes.Red, new PointF(ClientSize.Width / 2 - e.Graphics.MeasureString("working...", Font).Width / 2, ClientSize.Height / 2 - e.Graphics.MeasureString("working...", Font).Height / 2));
 			DateTime t = DateTime.Now;
 
-			#region set drawing
+			#region Mandelbrotset drawing
 			if (b == null || updateMandelbrot)
 			{
 				updateMandelbrot = false;
-
+			
 				int numberOfIterations;
 				ComplexNumber c;
 				ComplexNumber z;
 				b = new Bitmap(ClientSize.Width, ClientSize.Height);
-
+			 
 				for (double i = 0; i < ClientSize.Width; i++)
 				{
 					for (double j = 0; j < ClientSize.Height; j++)
@@ -113,7 +120,7 @@ namespace Mandelbrotmenge
 			e.Graphics.DrawImage(b, new PointF(0, 0));
 			#endregion
 
-			#region Coordinate System drawing
+			#region Coordinate-System drawing
 			if (drawAxis)
 			{
 				//x-Achse
@@ -145,14 +152,16 @@ namespace Mandelbrotmenge
 			}
 			#endregion
 
-			#region info drawing
+			#region Info drawing
 			string s = "";
 			if (drawCoordInfo)
-				s += "xMin: " + CoordinateSystem.xMin + "\nxMax: " + CoordinateSystem.xMax + "\nyMin: " + CoordinateSystem.yMin + "\nyMax: " + CoordinateSystem.yMax + "\n";
+				s += "x ∈ [" + CoordinateSystem.xMin + ";" + CoordinateSystem.xMax + "]\ny ∈ [" + CoordinateSystem.yMin + ";" + CoordinateSystem.yMax + "]\n";
 			if (drawPerfInfo)
-				s += (DateTime.Now - t).ToString()+ "\n";
+				s += "Time in sec to calculate the set: " + (DateTime.Now - t).TotalSeconds.ToString()+ " s\n";
 			if (drawCenterCoordInfo)
-				s += ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2)).ToString() + "\n";
+				s += "Coordinates of the screencenter: " +  ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2)).ToString() + "\n";
+			if (drawNumberOfIterations)
+				s += "Number of Iterations per Pixel:" + numberOfMaxIterations + "\n";
 			if (drawInfo)
 				e.Graphics.DrawString(s, Font, Brushes.Red, new PointF(0, 0));
 
