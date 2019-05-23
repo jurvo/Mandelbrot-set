@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Threading;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace Mandelbrotmenge
 {
 	public partial class main : Form
 	{
+		private delegate void SafeCallDelegate();
+
 		/// <summary>
 		/// Ration between width and height.
 		/// </summary>
@@ -51,7 +54,8 @@ namespace Mandelbrotmenge
 
 		private bool updateMandelbrot;
 
-		Bitmap b;
+		bool q1ready = false, q2ready = false, q3ready = false, q4ready = false;
+		Bitmap b, q1, q2, q3, q4;
 
 		public main()
 		{
@@ -60,7 +64,12 @@ namespace Mandelbrotmenge
 
 			Size = Screen.PrimaryScreen.Bounds.Size; //set fullscreen
 
-			updateMandelbrot = false;
+			updateMandelbrot = true;
+
+			q1 = new Bitmap(ClientSize.Width / 2, ClientSize.Height / 2);
+			q2 = new Bitmap(ClientSize.Width / 2, ClientSize.Height / 2);
+			q3 = new Bitmap(ClientSize.Width / 2, ClientSize.Height / 2);
+			q4 = new Bitmap(ClientSize.Width / 2, ClientSize.Height / 2);
 
 			#region Init of CoordinateSystem
 			screenRatio = ClientSize.Width / (double)ClientSize.Height;
@@ -92,6 +101,7 @@ namespace Mandelbrotmenge
 			DateTime t = DateTime.Now;
 
 			#region Mandelbrotset drawing
+			/*
 			if (b == null || updateMandelbrot)
 			{
 				updateMandelbrot = false;
@@ -117,7 +127,27 @@ namespace Mandelbrotmenge
 					}
 				}
 			}
-			e.Graphics.DrawImage(b, new PointF(0, 0));
+			e.Graphics.DrawImage(b, new PointF(0, 0));*/
+			#endregion
+
+			#region new Mandelbrotset drawing
+			if (updateMandelbrot)
+			{
+				updateMandelbrot = false;
+				q1ready = q2ready = q3ready = q4ready = false;
+				new Thread(new ThreadStart(calcQ1)).Start();
+				new Thread(new ThreadStart(calcQ2)).Start();
+				new Thread(new ThreadStart(calcQ3)).Start();
+				new Thread(new ThreadStart(calcQ4)).Start();
+			}
+			if (q1ready)
+				e.Graphics.DrawImage(q1, new PointF(0, 0));
+			if (q2ready)
+				e.Graphics.DrawImage(q2, new PointF(ClientSize.Width / 2, 0));
+			if (q3ready)
+				e.Graphics.DrawImage(q3, new PointF(0, ClientSize.Height / 2));
+			if (q4ready)
+				e.Graphics.DrawImage(q4, new PointF(ClientSize.Width / 2, ClientSize.Height / 2));
 			#endregion
 
 			#region Coordinate-System drawing
@@ -190,6 +220,9 @@ namespace Mandelbrotmenge
 					break;
 				case Keys.I:
 					drawInfo = !drawInfo;
+					Invalidate();
+					break;
+				case Keys.Space:
 					Invalidate();
 					break;
 				default:
@@ -269,6 +302,118 @@ namespace Mandelbrotmenge
 			double y = (CoordinateSystem.Origin.Y - p.Y) / CoordinateSystem.yResolution;
 
 			return new PointF((float)x, (float)y);
+		}
+
+		private void calcQ1()
+		{
+			q1ready = false;
+			int numberOfIterations;
+			ComplexNumber c;
+			ComplexNumber z;
+
+			for (double i = 0; i < ClientSize.Width / 2; i++)
+			{
+				for (double j = 0; j < ClientSize.Height / 2; j++)
+				{
+					numberOfIterations = 0;
+					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
+						numberOfIterations = numberOfMaxIterations;
+					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+					{
+						z = z * z + c;
+						numberOfIterations++;
+					}
+					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					q1.SetPixel((int)i, (int)j, Color.FromArgb(255, x, x, x));
+				}
+			}
+			q1ready = true;
+			Invoke(new SafeCallDelegate(Refresh));
+		}
+
+		private void calcQ2()
+		{
+			q2ready = false;
+			int numberOfIterations;
+			ComplexNumber c;
+			ComplexNumber z;
+
+			for (double i = ClientSize.Width / 2; i < ClientSize.Width; i++)
+			{
+				for (double j = 0; j < ClientSize.Height / 2; j++)
+				{
+					numberOfIterations = 0;
+					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
+						numberOfIterations = numberOfMaxIterations;
+					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+					{
+						z = z * z + c;
+						numberOfIterations++;
+					}
+					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					q2.SetPixel((int)i - ClientSize.Width / 2, (int)j, Color.FromArgb(255, x, x, x));
+				}
+			}
+			q2ready = true;
+			Invoke(new SafeCallDelegate(Refresh));
+		}
+
+		private void calcQ3()
+		{
+			q3ready = false;
+			int numberOfIterations;
+			ComplexNumber c;
+			ComplexNumber z;
+
+			for (double i = 0; i < ClientSize.Width / 2; i++)
+			{
+				for (double j = ClientSize.Height / 2; j < ClientSize.Height; j++)
+				{
+					numberOfIterations = 0;
+					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
+						numberOfIterations = numberOfMaxIterations;
+					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+					{
+						z = z * z + c;
+						numberOfIterations++;
+					}
+					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					q3.SetPixel((int)i, (int)j - ClientSize.Height / 2, Color.FromArgb(255, x, x, x));
+				}
+			}
+			q3ready = true;
+			Invoke(new SafeCallDelegate(Refresh));
+		}
+
+		private void calcQ4()
+		{
+			q4ready = false;
+			int numberOfIterations;
+			ComplexNumber c;
+			ComplexNumber z;
+
+			for (double i = ClientSize.Width / 2; i < ClientSize.Width; i++)
+			{
+				for (double j = ClientSize.Height / 2; j < ClientSize.Height; j++)
+				{
+					numberOfIterations = 0;
+					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
+						numberOfIterations = numberOfMaxIterations;
+					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+					{
+						z = z * z + c;
+						numberOfIterations++;
+					}
+					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					q4.SetPixel((int)i - ClientSize.Width / 2, (int)j - ClientSize.Height / 2, Color.FromArgb(255, x, x, x));
+				}
+			}
+			q4ready = true;
+			Invoke(new SafeCallDelegate(Refresh));
 		}
 	}
 }
