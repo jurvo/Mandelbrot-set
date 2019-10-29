@@ -187,9 +187,9 @@ namespace Mandelbrotmenge
 			if (drawCoordInfo)
 				s += "x ∈ [" + CoordinateSystem.xMin + ";" + CoordinateSystem.xMax + "]\ny ∈ [" + CoordinateSystem.yMin + ";" + CoordinateSystem.yMax + "]\n";
 			if (drawPerfInfo)
-				s += "Time in sec to calculate the set: " + (DateTime.Now - t).TotalSeconds.ToString()+ " s\n";
+				s += "Time in sec to calculate the set: " + (DateTime.Now - t).TotalSeconds.ToString() + " s\n";
 			if (drawCenterCoordInfo)
-				s += "Coordinates of the screencenter: " +  ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2)).ToString() + "\n";
+				s += "Coordinates of the screencenter: " + ScreenToCoordinate(new PointF(ClientSize.Width / 2, ClientSize.Height / 2)).ToString() + "\n";
 			if (drawNumberOfIterations)
 				s += "Number of Iterations per Pixel:" + numberOfMaxIterations + "\n";
 			if (drawInfo)
@@ -198,7 +198,7 @@ namespace Mandelbrotmenge
 			if (drawCrosshair)
 			{
 				e.Graphics.DrawLine(CoordinateSystem.Pen, ClientSize.Width / 2, ClientSize.Height / 2 - 5, ClientSize.Width / 2, ClientSize.Height / 2 + 5);
-				e.Graphics.DrawLine(CoordinateSystem.Pen, ClientSize.Width / 2 - 5, ClientSize.Height / 2, ClientSize.Width / 2 + 5, ClientSize.Height / 2 );
+				e.Graphics.DrawLine(CoordinateSystem.Pen, ClientSize.Width / 2 - 5, ClientSize.Height / 2, ClientSize.Width / 2 + 5, ClientSize.Height / 2);
 			}
 			#endregion
 		}
@@ -307,24 +307,14 @@ namespace Mandelbrotmenge
 		private void calcQ1()
 		{
 			q1ready = false;
-			int numberOfIterations;
-			ComplexNumber c;
 			ComplexNumber z;
 
 			for (double i = 0; i < ClientSize.Width / 2; i++)
 			{
 				for (double j = 0; j < ClientSize.Height / 2; j++)
 				{
-					numberOfIterations = 0;
-					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
-					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
-						numberOfIterations = numberOfMaxIterations;
-					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
-					{
-						z = z * z + c;
-						numberOfIterations++;
-					}
-					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					z = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					int x = DrawCondition(z);
 					q1.SetPixel((int)i, (int)j, Color.FromArgb(255, x, x, x));
 				}
 			}
@@ -335,7 +325,6 @@ namespace Mandelbrotmenge
 		private void calcQ2()
 		{
 			q2ready = false;
-			int numberOfIterations;
 			ComplexNumber c;
 			ComplexNumber z;
 
@@ -343,16 +332,8 @@ namespace Mandelbrotmenge
 			{
 				for (double j = 0; j < ClientSize.Height / 2; j++)
 				{
-					numberOfIterations = 0;
-					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
-					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
-						numberOfIterations = numberOfMaxIterations;
-					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
-					{
-						z = z * z + c;
-						numberOfIterations++;
-					}
-					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					z = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					int x = DrawCondition(z);
 					q2.SetPixel((int)i - ClientSize.Width / 2, (int)j, Color.FromArgb(255, x, x, x));
 				}
 			}
@@ -363,7 +344,6 @@ namespace Mandelbrotmenge
 		private void calcQ3()
 		{
 			q3ready = false;
-			int numberOfIterations;
 			ComplexNumber c;
 			ComplexNumber z;
 
@@ -371,16 +351,8 @@ namespace Mandelbrotmenge
 			{
 				for (double j = ClientSize.Height / 2; j < ClientSize.Height; j++)
 				{
-					numberOfIterations = 0;
-					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
-					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
-						numberOfIterations = numberOfMaxIterations;
-					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
-					{
-						z = z * z + c;
-						numberOfIterations++;
-					}
-					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					z = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					int x = DrawCondition(z);
 					q3.SetPixel((int)i, (int)j - ClientSize.Height / 2, Color.FromArgb(255, x, x, x));
 				}
 			}
@@ -391,7 +363,6 @@ namespace Mandelbrotmenge
 		private void calcQ4()
 		{
 			q4ready = false;
-			int numberOfIterations;
 			ComplexNumber c;
 			ComplexNumber z;
 
@@ -399,21 +370,27 @@ namespace Mandelbrotmenge
 			{
 				for (double j = ClientSize.Height / 2; j < ClientSize.Height; j++)
 				{
-					numberOfIterations = 0;
-					z = c = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
-					if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
-						numberOfIterations = numberOfMaxIterations;
-					while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
-					{
-						z = z * z + c;
-						numberOfIterations++;
-					}
-					int x = numberOfIterations * 255 / numberOfMaxIterations;
+					z = new ComplexNumber(ScreenToCoordinate(new PointF((float)i, (float)j)));
+					int x = DrawCondition(z);
 					q4.SetPixel((int)i - ClientSize.Width / 2, (int)j - ClientSize.Height / 2, Color.FromArgb(255, x, x, x));
 				}
 			}
 			q4ready = true;
 			Invoke(new SafeCallDelegate(Refresh));
+		}
+
+		private int DrawCondition(ComplexNumber z)
+		{
+			int numberOfIterations = 0;
+			ComplexNumber c = z;
+			if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
+				numberOfIterations = numberOfMaxIterations;
+			while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+			{
+				z = z * z + c;
+				numberOfIterations++;
+			}
+			return numberOfIterations * 255 / numberOfMaxIterations;
 		}
 	}
 }
