@@ -385,7 +385,7 @@ namespace Mandelbrotmenge
 			ComplexNumber c = z;
 			if (z.Real < 0.25 && z.Real > -0.5 && z.Imaginary < 0.4 && z.Imaginary > -0.4)
 				numberOfIterations = numberOfMaxIterations;
-			while (numberOfIterations < numberOfMaxIterations && z.Sqrt() < 2)
+			while (numberOfIterations < numberOfMaxIterations && z.AbsoluteValue() < 2)
 			{
 				z = z * z + c;
 				numberOfIterations++;
